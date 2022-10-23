@@ -1,10 +1,11 @@
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-
 import EssentialLink from "components/EssentialLink.vue";
 import { auth } from "src/firebase/firebaseConfig";
-import { async } from "@firebase/util";
+
+const userGoogle = inject("userGoogle");
+
 const essentialLinks = [
   {
     title: "Docs",
@@ -23,12 +24,10 @@ const accessGoogle = async () => {
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
-
     const credential = GoogleAuthProvider.credentialFromResult(result);
     const token = credential.accessToken;
     const user = result.user;
-
-    console.log(token, user);
+    console.log({ token });
   } catch (error) {
     console.error(error);
     // Handle Errors here.
@@ -66,18 +65,33 @@ const logoutGoogle = async () => {
         icon="mdi-google"
         label="Ingresar"
         @click="accessGoogle"
+        v-if="!userGoogle"
       />
       <q-btn
         color="accent"
         icon="mdi-logout-variant"
         label="Salir"
         @click="logoutGoogle"
+        v-if="userGoogle"
       />
-      <q-btn dense flat round icon="menu" @click="toggleRightDrawer" />
+      <q-btn
+        dense
+        flat
+        round
+        icon="menu"
+        @click="toggleRightDrawer"
+        v-if="userGoogle"
+      />
     </q-toolbar>
   </q-header>
 
-  <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
+  <q-drawer
+    v-if="userGoogle"
+    show-if-above
+    v-model="rightDrawerOpen"
+    side="right"
+    bordered
+  >
     <q-list>
       <q-item-label header> Essential Links </q-item-label>
 
