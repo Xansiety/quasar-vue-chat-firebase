@@ -8,7 +8,7 @@ const chatMessages = ref([]);
 const chatContainerRef = ref(null);
 
 //https://vuejs.org/api/reactivity-core.html#watcheffect
-watchEffect(() => {
+watchEffect((onCleanup) => {
   if (userGoogle.value) {
     const q = query(collection(db, "chat"), orderBy("time", "asc"));
     const unsubscribe = onSnapshot(q, async (snapshot) => {
@@ -27,6 +27,7 @@ watchEffect(() => {
       // empuja al final del chat
       chatContainerRef.value.scrollTo(0, chatContainerRef.value.scrollHeight);
     });
+    onCleanup(unsubscribe);
   }
 });
 </script>
