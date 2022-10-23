@@ -3,7 +3,6 @@
     <NavBar />
 
     <q-page-container>
-      <!-- {{ userGoogle }} -->
       <router-view />
     </q-page-container>
 

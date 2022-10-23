@@ -1,24 +1,15 @@
 <script setup>
 import { ref, inject } from "vue";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import EssentialLink from "components/EssentialLink.vue";
+import InfoUserVue from "components/InfoUser.vue";
 import { auth } from "src/firebase/firebaseConfig";
 
 const userGoogle = inject("userGoogle");
 
-const essentialLinks = [
-  {
-    title: "Docs",
-    caption: "quasar.dev",
-    icon: "school",
-    link: "https://quasar.dev",
-  },
-];
 const rightDrawerOpen = ref(false);
 const toggleRightDrawer = () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 };
-
 const accessGoogle = async () => {
   console.log("Iniciando sesion");
   const provider = new GoogleAuthProvider();
@@ -39,7 +30,6 @@ const accessGoogle = async () => {
     const credential = GoogleAuthProvider.credentialFromError(error);
   }
 };
-
 const logoutGoogle = async () => {
   console.log("Cerrando sesion");
   try {
@@ -93,13 +83,7 @@ const logoutGoogle = async () => {
     bordered
   >
     <q-list>
-      <q-item-label header> Essential Links </q-item-label>
-
-      <EssentialLink
-        v-for="link in essentialLinks"
-        :key="link.title"
-        v-bind="link"
-      />
+      <InfoUserVue />
     </q-list>
   </q-drawer>
 </template>
