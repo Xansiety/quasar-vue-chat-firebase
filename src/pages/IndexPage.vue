@@ -6,8 +6,12 @@ import { auth, db } from "src/firebase/firebaseConfig";
 const userGoogle = inject("userGoogle");
 const q = query(collection(db, "chat"), orderBy("time", "asc"));
 const chatMessages = ref([]);
+const chatContainerRef = ref(null);
 
 const unsubscribe = onSnapshot(q, (snapshot) => {
+  // console.log(userGoogle.value);
+  // if (!userGoogle.value) return;
+
   snapshot.docChanges().forEach((change) => {
     if (change.type === "added") {
       console.log("nuevo mensaje recibido: ", change.doc.data());
@@ -15,7 +19,15 @@ const unsubscribe = onSnapshot(q, (snapshot) => {
         uid: change.doc.id,
         ...change.doc.data(),
       });
+
+      setTimeout(() => {
+        if (chatContainerRef.value !== null) {
+          console.log(chatContainerRef.value.scrollHeight);
+          window.scrollTo(0, chatContainerRef.value.scrollHeight);
+        }
+      }, 600);
     }
+
     // if (change.type === "modified") {
     //     console.log("Modified city: ", change.doc.data());
     // }
@@ -30,7 +42,7 @@ const unsubscribe = onSnapshot(q, (snapshot) => {
     <h3 class="text-center text-primary">Debes de iniciar sesión</h3>
   </q-page>
   <q-page v-else padding>
-    <div class="q-pa-md row justify-center">
+    <div class="q-pa-md row justify-center" ref="chatContainerRef">
       <div style="width: 100%; max-width: 400px">
         <template v-for="message in chatMessages" :key="message.id">
           <q-chat-message
@@ -38,7 +50,9 @@ const unsubscribe = onSnapshot(q, (snapshot) => {
             :text="[message.message]"
             stamp="7 minutes ago"
             :sent="message.uid === auth.currentUser.uid"
-            bg-color="amber-7"
+            :bg-color="
+              message.uid === auth.currentUser.uid ? 'teal-6' : 'blue-2'
+            "
           />
         </template>
       </div>
