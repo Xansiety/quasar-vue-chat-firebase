@@ -1,29 +1,33 @@
 <script setup>
-import { inject, ref, nextTick } from "vue";
+import { inject, ref, nextTick, watchEffect } from "vue";
 import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
 import { auth, db } from "src/firebase/firebaseConfig";
-import { async } from "@firebase/util";
 
 const userGoogle = inject("userGoogle");
-const q = query(collection(db, "chat"), orderBy("time", "asc"));
 const chatMessages = ref([]);
 const chatContainerRef = ref(null);
 
-const unsubscribe = onSnapshot(q, async (snapshot) => {
-  // https://firebase.google.com/docs/firestore/query-data/listen?authuser=1#view_changes_between_snapshots
-  snapshot.docChanges().forEach((change) => {
-    if (change.type === "added") {
-      console.log(change.doc.id);
-      // console.log("nuevo mensaje recibido: ", change.doc.data());
-      chatMessages.value.push({
-        uid: change.doc.id,
-        ...change.doc.data(),
+//https://vuejs.org/api/reactivity-core.html#watcheffect
+watchEffect(() => {
+  if (userGoogle.value) {
+    const q = query(collection(db, "chat"), orderBy("time", "asc"));
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      // https://firebase.google.com/docs/firestore/query-data/listen?authuser=1#view_changes_between_snapshots
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          console.log(change.doc.id);
+          // console.log("nuevo mensaje recibido: ", change.doc.data());
+          chatMessages.value.push({
+            uid: change.doc.id,
+            ...change.doc.data(),
+          });
+        }
       });
-    }
-  });
-  await nextTick();
-  // empuja al final del chat
-  chatContainerRef.value.scrollTo(0, chatContainerRef.value.scrollHeight);
+      await nextTick();
+      // empuja al final del chat
+      chatContainerRef.value.scrollTo(0, chatContainerRef.value.scrollHeight);
+    });
+  }
 });
 </script>
 <template>
