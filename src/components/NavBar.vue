@@ -3,9 +3,7 @@ import { ref, inject } from "vue";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import InfoUserVue from "components/InfoUser.vue";
 import { auth } from "src/firebase/firebaseConfig";
-
 const userGoogle = inject("userGoogle");
-
 const rightDrawerOpen = ref(false);
 const toggleRightDrawer = () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
