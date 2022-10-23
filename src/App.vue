@@ -20,3 +20,9 @@ onAuthStateChanged(auth, (user) => {
 <template>
   <router-view v-if="userGoogle !== false" />
 </template>
+
+<style>
+body {
+  overflow-y: hidden;
+}
+</style>
