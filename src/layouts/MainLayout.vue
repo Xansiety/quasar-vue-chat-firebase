@@ -15,8 +15,5 @@
 import NavBar from "src/components/NavBar.vue";
 import FooterBar from "src/components/FooterBar.vue";
 import { inject } from "vue";
-
 const userGoogle = inject("userGoogle");
-
-console.log({ userGoogle });
 </script>
