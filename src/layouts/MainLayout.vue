@@ -3,7 +3,7 @@
     <NavBar />
 
     <q-page-container>
-      {{ userGoogle }}
+      <!-- {{ userGoogle }} -->
       <router-view />
     </q-page-container>
 
@@ -14,6 +14,4 @@
 <script setup>
 import NavBar from "src/components/NavBar.vue";
 import FooterBar from "src/components/FooterBar.vue";
-import { inject } from "vue";
-const userGoogle = inject("userGoogle");
 </script>
