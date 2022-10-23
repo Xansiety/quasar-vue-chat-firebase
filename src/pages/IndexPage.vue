@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref } from "vue";
+import { inject, ref, nextTick } from "vue";
 import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
 import { auth, db } from "src/firebase/firebaseConfig";
 
@@ -12,7 +12,7 @@ const unsubscribe = onSnapshot(q, (snapshot) => {
   // console.log(userGoogle.value);
   // if (!userGoogle.value) return;
 
-  snapshot.docChanges().forEach((change) => {
+  snapshot.docChanges().forEach(async (change) => {
     if (change.type === "added") {
       console.log("nuevo mensaje recibido: ", change.doc.data());
       chatMessages.value.push({
@@ -20,12 +20,15 @@ const unsubscribe = onSnapshot(q, (snapshot) => {
         ...change.doc.data(),
       });
 
-      setTimeout(() => {
-        if (chatContainerRef.value !== null) {
-          console.log(chatContainerRef.value.scrollHeight);
-          window.scrollTo(0, chatContainerRef.value.scrollHeight);
-        }
-      }, 600);
+      await nextTick();
+      window.scrollTo(0, chatContainerRef.value.scrollHeight);
+
+      // setTimeout(() => {
+      //   if (chatContainerRef.value !== null) {
+      //     console.log(chatContainerRef.value.scrollHeight);
+      //     window.scrollTo(0, chatContainerRef.value.scrollHeight);
+      //   }
+      // }, 600);
     }
 
     // if (change.type === "modified") {
