@@ -1,16 +1,24 @@
 <script setup>
 import { inject, ref, nextTick, watchEffect } from "vue";
-import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
+import {
+  collection,
+  query,
+  onSnapshot,
+  orderBy,
+  limit,
+} from "firebase/firestore";
 import { auth, db } from "src/firebase/firebaseConfig";
 
 const userGoogle = inject("userGoogle");
 const chatMessages = ref([]);
 const chatContainerRef = ref(null);
 
+let inicio = 0;
+
 //https://vuejs.org/api/reactivity-core.html#watcheffect
 watchEffect((onCleanup) => {
   if (userGoogle.value) {
-    const q = query(collection(db, "chat"), orderBy("time", "asc"));
+    const q = query(collection(db, "chat"), orderBy("time", "desc"), limit(10));
     const unsubscribe = onSnapshot(q, async (snapshot) => {
       // https://firebase.google.com/docs/firestore/query-data/listen?authuser=1#view_changes_between_snapshots
       snapshot.docChanges().forEach((change) => {
@@ -23,6 +31,12 @@ watchEffect((onCleanup) => {
           });
         }
       });
+
+      if (inicio === 0) {
+        chatMessages.value = chatMessages.value.reverse();
+        inicio = 1;
+      }
+
       await nextTick();
       // empuja al final del chat
       chatContainerRef.value.scrollTo(0, chatContainerRef.value.scrollHeight);
